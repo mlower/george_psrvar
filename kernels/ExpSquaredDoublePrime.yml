@@ -1,0 +1,33 @@
+name: ExpSquaredDoublePrimeKernel
+stationary: false
+params: [variance]
+
+doc: |
+    The second derivative of the squared exponential kernel
+
+    .. math::
+        \\frac{x e^{-\\frac{x^2}{2 v}}}{v}
+    :param variance:
+        The (squared) width :math:`\sigma^2` of the Gaussian.
+
+value: |
+    double d1 = x1 - x2, d2 = (x1 - x2)*(x1 - x2);
+    double expo = exp(-d2 / (2.0 * variance));
+    return expo * (d2 - variance)/ (variance * variance);
+    
+grad:
+    variance: |
+        double d1 = x1 - x2, d2 = (x1 - x2)*(x1 - x2);
+        double expo = exp(-d2 / (2.0 * variance));
+        double v2 = variance * variance;
+        return expo / (2.0 * v2 * v2) * (2.0 * v2 + d2 * d2 - 5.0 * variance * d2);
+    x1: |
+        double d1 = x1 - x2, d2 = (x1 - x2)*(x1 - x2);
+        double expo = exp(-d2 / (2.0 * variance));
+        double v3 = variance * variance * variance;
+        return - d1 * expo / v3 * (d2 - 3.0 * variance);
+    x2: |
+        double d1 = x1 - x2, d2 = (x1 - x2)*(x1 - x2);
+        double expo = exp(-d2 / (2.0 * variance));	
+        double v3 = variance * variance * variance;
+        return d1 * expo / v3 * (d2 - 3.0 * variance);
