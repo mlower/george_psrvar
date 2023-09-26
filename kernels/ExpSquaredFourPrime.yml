@@ -1,0 +1,38 @@
+name: ExpSquaredFourPrimeKernel
+stationary: false
+params: [variance]
+
+doc: |
+    The second derivative of the squared exponential kernel
+
+    .. math::
+        \\frac{x e^{-\\frac{x^2}{2 v}}}{v}
+    :param variance:
+        The (squared) width :math:`\sigma^2` of the Gaussian.
+
+value: |
+    double d1 = x1 - x2, d2 = (x1 - x2)*(x1 - x2);
+    double expo = exp(-d2 / (2.0 * variance));
+    double v2 = variance*variance;
+    double v4 = v2*v2;
+    return expo * (3.0*v2 - 6.0*variance*d2 + d2*d2)/ v4;
+    
+grad:
+    variance: |
+        double d1 = x1 - x2, d2 = (x1 - x2)*(x1 - x2);
+        double expo = exp(-d2 / (2.0 * variance));
+        double v2 = variance * variance;
+        double v3 = variance * v2;
+        return -expo*(12*v3 - 39.0*v2*d2 + 14.0*variance*d2*d2 - d2*d2*d2)/(2.0*v3*v3);
+    x1: |
+        double d1 = x1 - x2, d2 = (x1 - x2)*(x1 - x2);
+        double expo = exp(-d2 / (2.0 * variance));
+        double v2 = variance * variance;
+        double v3 = variance * v2;
+        return -d1*expo*(15.0*v2 - 10.0*variance*d2 + d2*d2)/(v2*v3);
+    x2: |
+        double d1 = x1 - x2, d2 = (x1 - x2)*(x1 - x2);
+        double expo = exp(-d2 / (2.0 * variance));	
+        double v2 = variance * variance;
+        double v3 = variance * v2;
+        return d1*expo*(15.0*v2 - 10.0*variance*d2 + d2*d2)/(v2*v3);
